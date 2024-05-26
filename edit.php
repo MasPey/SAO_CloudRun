@@ -17,7 +17,7 @@ $data = array(
 );
 
 // URL endpoint API
-$url = 'hhttps://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/putdonasi.php';
+$url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/putdonasi.php';
 
 // Inisialisasi curl
 $ch = curl_init();
