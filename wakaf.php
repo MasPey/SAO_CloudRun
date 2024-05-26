@@ -134,7 +134,7 @@
                                 $curl = curl_init();
 
                                 // Set URL dari API getsedekah.php
-                                curl_setopt($curl, CURLOPT_URL, "https://sao-cloudrun-q2od2bwu5a-et.a.run.app/api-sao/getwakaf.php");
+                                curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getwakaf.php");
 
                                 // Set metode HTTP menjadi GET
                                 curl_setopt($curl, CURLOPT_HTTPGET, true);
