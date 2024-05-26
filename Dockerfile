@@ -14,4 +14,4 @@ RUN docker-php-ext-install mysqli
 EXPOSE 3000
 
 # CMD to run the PHP application
-CMD ["apache2-foreground"]
+CMD ["php", "-S", "0.0.0.0:8080", "-t", "/var/www/html"]
