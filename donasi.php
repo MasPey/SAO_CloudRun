@@ -188,7 +188,7 @@
 
 </html>
 <?php
-$connect = new mysqli('34.101.187.105', 'root', '', 'sao');
+// $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
 // if ($_POST['jumlah'] != NULL) {
 //     $query = mysqli_query($connect, "INSERT INTO donasi VALUES 
 //     (NULL, '$_POST[nama]', '$_POST[kontak]', '$_POST[email]', '$_POST[catatan]', '$_POST[program]', '$_POST[jenis]', '$_POST[jumlah]', '$_POST[payment]', 'PROSES')");
@@ -197,7 +197,7 @@ $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
 // }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $url = 'http://localhost/prakweb/PROJEK%20AKHIR/api-sao/postdonasi.php';
+    $url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/postdonasi.php';
     $data = [
         'nama' => $_POST['nama'],
         'kontak' => $_POST['kontak'],
