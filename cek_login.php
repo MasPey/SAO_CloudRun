@@ -2,7 +2,7 @@
     session_start();
 
     // Mendefinisikan URL API
-    $url = 'https://sao-cloudrun-q2od2bwu5a-et.a.run.app/api-sao/authenticate.php';
+    $url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/authenticate.php';
 
     // Membuat data yang akan dikirimkan ke API
     $data = array(
