@@ -19,7 +19,7 @@ $path = isset($_GET['path']) ? $_GET['path'] : '.';
 $ignore = array('.', '..', 'index.php'); // Add any files or directories you want to ignore
 
 if ($path === './api-sao') {
-    $filesToDisplay = array('admin.php', 'cek_login.php', 'donasi.php', 'edit.php', 'index.php', 'login.php', 'logout.php', 'sedekah.php', 'update.php', 'wakaf.php');
+    $filesToDisplay = array('authenticate.php', 'database.php', 'deletesedekah.php', 'deletewakaf.php', 'getdonasi.php', 'getsedekah.php', 'getwakaf.php', 'postdonasi.php, 'postsedekah.php', 'postwakaf.php', 'putdonasi.php');
     echo "<h1>Listing for /api-sao</h1>";
     echo "<ul>";
     foreach ($filesToDisplay as $file) {
