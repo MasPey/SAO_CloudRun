@@ -13,6 +13,9 @@ RUN docker-php-ext-install mysqli
 # Aktifkan modul mod_autoindex untuk menampilkan dir
 RUN a2enmod autoindex
 
+# Tambahkan konfigurasi untuk mengatur opsi Indexes pada direktori root
+RUN echo "<Directory /var/www/html/>\n\tOptions Indexes FollowSymLinks\n\tAllowOverride All\n\tRequire all granted\n</Directory>" >> /etc/apache2/apache2.conf
+
 # Set port yang akan digunakan oleh server Apache PHP
 EXPOSE 3000
 
