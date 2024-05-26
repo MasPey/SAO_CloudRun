@@ -50,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Jika terjadi kesalahan saat mengeksekusi query, kirim respons dengan pesan kesalahan
             echo json_encode(array('message' => 'Error executing query'));
         }
-
         // Menutup pernyataan dan koneksi database
         $stmt->close();
         $db_connect->close();
