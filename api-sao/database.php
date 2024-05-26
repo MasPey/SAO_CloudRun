@@ -1,14 +1,5 @@
 <?php
 
-// define('HOST', '34.101.187.105');
-// define('USER', 'root');
-// define('PASS', '');
-// define('DB', 'sao');
-
-// $db_connect = mysqli_connect(HOST, USER, PASS, DB) or die ('GAGAL CONNECT');
-
-// header('Content-Type: application/json');
-
 class Database {
     private $host = '34.101.187.105';
     private $user = 'root';
