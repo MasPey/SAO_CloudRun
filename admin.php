@@ -296,7 +296,7 @@ if (empty($_SESSION['id'])) {
                     <th colspan="2">Status</th>
                 </tr>
                 <?php
-                $url = 'https://sao-cloudrun-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php';
+                $url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php';
                 $data = [];
                 
                 // Check if 'program' parameter is set in the URL
