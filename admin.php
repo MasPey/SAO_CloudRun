@@ -115,22 +115,56 @@ if (empty($_SESSION['id'])) {
                 <div class="row">
                     <div class="col card" style="margin: 0% 2%; align-items: center; text-align: center;">
                         <img src="foto/donasi.png" alt="foto" width="50%" style="margin-top: -20%;">
+                        
                         <h6>
                             DONASI TERKUMPUL
                             <hr>
                             <?php
-                            $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                            $query = mysqli_query($connect, "SELECT SUM(jumlah) AS total FROM donasi");
-                            $query2 = mysqli_query($connect, "SELECT SUM(jumlah) AS totals FROM donasi WHERE program='sedekah'");
-                            $query3 = mysqli_query($connect, "SELECT SUM(jumlah) AS totalw FROM donasi WHERE program='wakaf'");
-                            $data = mysqli_fetch_array($query);
-                            $data2= mysqli_fetch_array($query2);
-                            $data3= mysqli_fetch_array($query3);
+                            // Inisialisasi CURL
+                            $curl = curl_init();
+
+                            // Set URL dari API
+                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php");
+
+                            // Set metode HTTP menjadi GET
+                            curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                            // Set agar CURL mengembalikan respons sebagai string
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                            // Lakukan request ke API
+                            $response = curl_exec($curl);
+
+                            // Tutup CURL
+                            curl_close($curl);
+
+                            // Dekode respons JSON
+                            $result = json_decode($response, true);
+
+                            // Inisialisasi variabel untuk menyimpan total donasi
+                            $totalSedekah = 0;
+                            $totalWakaf = 0;
+                            $totalDonasi = 0;
+
+                            // Periksa apakah respons berisi hasil yang valid
+                            if (isset($result['result'])) {
+                                // Looping melalui hasil untuk menghitung total donasi
+                                foreach ($result['result'] as $data) {
+                                    $jumlah = (int)$data['jumlah'];
+                                    $totalDonasi += $jumlah;
+                                    if ($data['program'] === 'sedekah') {
+                                        $totalSedekah += $jumlah;
+                                    } elseif ($data['program'] === 'wakaf') {
+                                        $totalWakaf += $jumlah;
+                                    }
+                                }
+                            }
                             ?>
-                            <p><?= "SEDEKAH : RP " . $data2['totals'].",00";?></p>
-                            <p><?= "WAKAF : RP " . $data3['totalw'].",00";?></p>
-                            <p><?= "TOTAL : RP " . $data['total'].",00";?></p>
+                            <p><?= "SEDEKAH : RP " . number_format($totalSedekah, 2, ',', '.'); ?></p>
+                            <p><?= "WAKAF : RP " . number_format($totalWakaf, 2, ',', '.'); ?></p>
+                            <p><?= "TOTAL : RP " . number_format($totalDonasi, 2, ',', '.'); ?></p>
                         </h6>
+
                     </div>
 
                     <div class="col card" style="margin: 0% 2%; align-items: center; text-align: center;">
@@ -139,22 +173,50 @@ if (empty($_SESSION['id'])) {
                             JUMLAH DONATUR
                             <hr>
                             <?php
-                            $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                            $query = mysqli_query($connect, "SELECT * FROM donasi");
-                            $donatur = 0;$s=0;$w=0;
-                            while ($data = mysqli_fetch_array($query)) {
-                                $donatur++;
-                                if($data['program']=='sedekah'){
-                                    $s++;
-                                }else{
-                                    $w++;
+                            // Inisialisasi CURL
+                            $curl = curl_init();
+
+                            // Set URL dari API
+                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php");
+
+                            // Set metode HTTP menjadi GET
+                            curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                            // Set agar CURL mengembalikan respons sebagai string
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                            // Lakukan request ke API
+                            $response = curl_exec($curl);
+
+                            // Tutup CURL
+                            curl_close($curl);
+
+                            // Dekode respons JSON
+                            $result = json_decode($response, true);
+
+                            // Inisialisasi variabel untuk menghitung jumlah donatur
+                            $donatur = 0;
+                            $s = 0;
+                            $w = 0;
+
+                            // Periksa apakah respons berisi hasil yang valid
+                            if (isset($result['result'])) {
+                                // Looping melalui hasil untuk menghitung jumlah donatur
+                                foreach ($result['result'] as $data) {
+                                    $donatur++;
+                                    if ($data['program'] === 'sedekah') {
+                                        $s++;
+                                    } elseif ($data['program'] === 'wakaf') {
+                                        $w++;
+                                    }
                                 }
                             }
                             ?>
-                            <p><?= "SEDEKAH : ".$s." Donatur ";?></p>
-                            <p><?= "WAKAF : ".$w." Donatur ";?></p>
-                            <p><?= "TOTAL : ".$donatur." Donatur";?></p>
+                            <p><?= "SEDEKAH : " . $s . " Donatur"; ?></p>
+                            <p><?= "WAKAF : " . $w . " Donatur"; ?></p>
+                            <p><?= "TOTAL : " . $donatur . " Donatur"; ?></p>
                         </h6>
+
                     </div>
                     <div class="col-6 card" style="margin: 0% 2%; align-items: center; text-align: center;">
                         <img src="foto/info.png" alt="foto" width="24%" style="margin-top: -6%;">
@@ -168,15 +230,47 @@ if (empty($_SESSION['id'])) {
                                         <h6>SEDEKAH</h6>
                                         <p>
                                             <?php
-                                            $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                                            $query = mysqli_query($connect, "SELECT * FROM sedekah");
+                                            // Inisialisasi CURL
+                                            $curl = curl_init();
+
+                                            // Set URL dari API
+                                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getsedekah.php");
+
+                                            // Set metode HTTP menjadi GET
+                                            curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                                            // Set agar CURL mengembalikan respons sebagai string
+                                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                                            // Lakukan request ke API
+                                            $response = curl_exec($curl);
+
+                                            // Tutup CURL
+                                            curl_close($curl);
+
+                                            // Dekode respons JSON
+                                            $result = json_decode($response, true);
+
+                                            // Inisialisasi variabel untuk menghitung jumlah data yang ditampilkan
                                             $i = 0;
-                                            while ($data = mysqli_fetch_array($query)) {
-                                                if ($i < 2) echo $data['jenis'] . ", ";
-                                                $i++;
+
+                                            // Periksa apakah respons berisi hasil yang valid
+                                            if (isset($result['result'])) {
+                                                // Looping melalui hasil untuk menampilkan data
+                                                foreach ($result['result'] as $data) {
+                                                    if ($i < 2) {
+                                                        echo $data['jenis'] . ", ";
+                                                        $i++;
+                                                    } else {
+                                                        break;
+                                                    }
+                                                }
+                                            } else {
+                                                echo "No data available";
                                             }
                                             ?>dll.
                                         </p>
+
                                         <form action="update.php" method="POST">
                                             <input type="hidden" name="program" value="sedekah">
                                             <div class="btn-group">
@@ -197,15 +291,43 @@ if (empty($_SESSION['id'])) {
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <?php
-                                                    $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                                                    $query = mysqli_query($connect, "SELECT * FROM sedekah");
-                                                    while ($data = mysqli_fetch_array($query)) {
-                                                    ?>
-                                                        <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
-                                                            <?= $data['jenis']; ?><br>
-                                                            <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
-                                                        </button>
-                                                    <?php } ?>
+                                                        // Inisialisasi CURL
+                                                        $curl = curl_init();
+
+                                                        // Set URL dari API
+                                                        curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getsedekah.php");
+
+                                                        // Set metode HTTP menjadi GET
+                                                        curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                                                        // Set agar CURL mengembalikan respons sebagai string
+                                                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                                                        // Lakukan request ke API
+                                                        $response = curl_exec($curl);
+
+                                                        // Tutup CURL
+                                                        curl_close($curl);
+
+                                                        // Dekode respons JSON
+                                                        $result = json_decode($response, true);
+
+                                                        // Periksa apakah respons berisi hasil yang valid
+                                                        if (isset($result['result'])) {
+                                                            // Looping melalui hasil untuk menampilkan tombol dropdown
+                                                            foreach ($result['result'] as $data) {
+                                                                ?>
+                                                                <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
+                                                                    <?= $data['jenis']; ?><br>
+                                                                    <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
+                                                                </button>
+                                                                <?php
+                                                            }
+                                                        } else {
+                                                            echo "No data available";
+                                                        }
+                                                        ?>
+
                                                 </ul>
                                             </div>
                                         </form>
@@ -218,15 +340,47 @@ if (empty($_SESSION['id'])) {
                                         <h6>WAKAF</h6>
                                         <p>
                                             <?php
-                                            $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                                            $query = mysqli_query($connect, "SELECT * FROM wakaf");
+                                            // Inisialisasi CURL
+                                            $curl = curl_init();
+
+                                            // Set URL dari API
+                                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getwakaf.php");
+
+                                            // Set metode HTTP menjadi GET
+                                            curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                                            // Set agar CURL mengembalikan respons sebagai string
+                                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                                            // Lakukan request ke API
+                                            $response = curl_exec($curl);
+
+                                            // Tutup CURL
+                                            curl_close($curl);
+
+                                            // Dekode respons JSON
+                                            $result = json_decode($response, true);
+
+                                            // Inisialisasi variabel untuk menghitung jumlah data yang ditampilkan
                                             $i = 0;
-                                            while ($data = mysqli_fetch_array($query)) {
-                                                if ($i < 2) echo $data['jenis'] . ", ";
-                                                $i++;
+
+                                            // Periksa apakah respons berisi hasil yang valid
+                                            if (isset($result['result'])) {
+                                                // Looping melalui hasil untuk menampilkan data
+                                                foreach ($result['result'] as $data) {
+                                                    if ($i < 2) {
+                                                        echo $data['jenis'] . ", ";
+                                                        $i++;
+                                                    } else {
+                                                        break;
+                                                    }
+                                                }
+                                            } else {
+                                                echo "No data available";
                                             }
                                             ?>dll.
                                         </p>
+
                                         <form action="update.php" method="POST">
                                             <input type="hidden" name="program" value="wakaf">
                                             <div class="btn-group">
@@ -247,14 +401,42 @@ if (empty($_SESSION['id'])) {
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <?php
-                                                    $connect = new mysqli('34.101.187.105', 'root', '', 'sao');
-                                                    $query = mysqli_query($connect, "SELECT * FROM wakaf");
-                                                    while ($data = mysqli_fetch_array($query)) {
+                                                    // Inisialisasi CURL
+                                                    $curl = curl_init();
+
+                                                    // Set URL dari API
+                                                    curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getwakaf.php");
+
+                                                    // Set metode HTTP menjadi GET
+                                                    curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+                                                    // Set agar CURL mengembalikan respons sebagai string
+                                                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                                                    // Lakukan request ke API
+                                                    $response = curl_exec($curl);
+
+                                                    // Tutup CURL
+                                                    curl_close($curl);
+
+                                                    // Dekode respons JSON
+                                                    $result = json_decode($response, true);
+
+                                                    // Periksa apakah respons berisi hasil yang valid
+                                                    if (isset($result['result'])) {
+                                                        // Looping melalui hasil untuk menampilkan tombol dropdown
+                                                        foreach ($result['result'] as $data) {
+                                                            ?>
+                                                            <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
+                                                                <?= $data['jenis']; ?><br>
+                                                                <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
+                                                            </button>
+                                                            <?php
+                                                        }
+                                                    } else {
+                                                        echo "No data available";
+                                                    }
                                                     ?>
-                                                        <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
-                                                            <?= $data['jenis']; ?><br>
-                                                            <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
-                                                        </button> <?php } ?>
                                                 </ul>
                                             </div>
                                         </form>
