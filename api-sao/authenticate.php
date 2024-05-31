@@ -40,8 +40,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Memeriksa apakah ada baris yang sesuai dengan id dan password yang diberikan
             if ($result->num_rows > 0) {
+                $apikey = generateApiKey(); //Fungsi untuk menghasilkan API key
+
+                // Simpan API key ke dalam database
+                $query = "UPDATE admin SET api_key = ? WHERE id = ?";
+                $stmt = $db_connect->prepare($query);
+                $stmt->bind_param("ss", $apikey, $id); // Anggap $userId adalah ID pengguna yang berhasil diotentikasi
+                $stmt->execute();
+
                 // Jika autentikasi berhasil, kirim respons dengan pesan "Authentication successful"
-                echo json_encode(array('message' => 'Authentication successful'));
+                echo json_encode(array('message' => 'Authentication successful', 'api_key' => $apikey));
             } else {
                 // Jika autentikasi gagal, kirim respons dengan pesan "Authentication failed"
                 echo json_encode(array('message' => 'Authentication failed'));
@@ -61,4 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Jika metode permintaan bukan POST, kirim respons dengan pesan kesalahan
     echo json_encode(array('message' => 'Invalid request method'));
 }
-?>
+
+// Fungsi untuk menghasilkan API key
+function generateApiKey()
+{
+    $apiKey = sha1(time() . mt_rand()); // Kombinasi waktu dan hash acak
+    return $apiKey;
+}
