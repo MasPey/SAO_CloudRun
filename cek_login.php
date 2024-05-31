@@ -40,6 +40,7 @@
     if (isset($result['message']) && $result['message'] === 'Authentication successful') {
         // Autentikasi berhasil, set session dan redirect ke halaman admin
         $_SESSION['id'] = $_POST['id'];
+        $_SESSION['api_key'] = $result['api_key'];
         header("location: admin.php");
     } else {
         // Autentikasi gagal, redirect ke halaman login dengan status failed
