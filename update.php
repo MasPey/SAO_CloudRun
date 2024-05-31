@@ -9,12 +9,12 @@ $tabel = $_POST['program'];
 $jenis = $_POST['jenis'];
 
 // URL untuk API deletesedekah.php dan postsedekah.php
-$deletesedekah_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/deletesedekah.php';
-$postsedekah_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/postsedekah.php';
+$deletesedekah_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/deletesedekah.php?api_key=' . $_SESSION['api_key'];
+$postsedekah_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/postsedekah.php?api_key=' . $_SESSION['api_key'];
 
 // URL untuk API deletewakaf.php dan postwakaf.php
-$deletewakaf_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/deletewakaf.php';
-$postwakaf_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/postwakaf.php';
+$deletewakaf_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/deletewakaf.php?api_key=' . $_SESSION['api_key'];
+$postwakaf_url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/postwakaf.php?api_key=' . $_SESSION['api_key'];
 
 // Menentukan URL API berdasarkan tabel
 if ($tabel == 'sedekah') {
