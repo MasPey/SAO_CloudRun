@@ -4,6 +4,7 @@ if (empty($_SESSION['id'])) {
     header("location: login.php?status=notlogin");
 }
 ?>
+
 <html>
 
 <head>
@@ -124,7 +125,7 @@ if (empty($_SESSION['id'])) {
                             $curl = curl_init();
 
                             // Set URL dari API
-                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php");
+                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php?api_key=" . $_SESSION['api_key']);
 
                             // Set metode HTTP menjadi GET
                             curl_setopt($curl, CURLOPT_HTTPGET, true);
@@ -177,7 +178,7 @@ if (empty($_SESSION['id'])) {
                             $curl = curl_init();
 
                             // Set URL dari API
-                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php");
+                            curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php?api_key=" . $_SESSION['api_key']);
 
                             // Set metode HTTP menjadi GET
                             curl_setopt($curl, CURLOPT_HTTPGET, true);
@@ -478,7 +479,8 @@ if (empty($_SESSION['id'])) {
                     <th colspan="2">Status</th>
                 </tr>
                 <?php
-                $url = 'https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php';
+                $url = "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php?api_key=" . $_SESSION['api_key'];
+                
                 $data = [];
                 
                 // Check if 'program' parameter is set in the URL
@@ -491,7 +493,7 @@ if (empty($_SESSION['id'])) {
                 
                 // Set the cURL options
                 curl_setopt_array($curl, [
-                    CURLOPT_URL => $url . '?' . http_build_query($data), // Append query parameters to the URL
+                    CURLOPT_URL => $url . '&' . http_build_query($data), // Append query parameters to the URL
                     CURLOPT_RETURNTRANSFER => true, // Return the response instead of printing it
                     CURLOPT_HEADER => false, // Exclude the header from the output
                     CURLOPT_FOLLOWLOCATION => true, // Follow redirects
