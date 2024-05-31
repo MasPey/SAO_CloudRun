@@ -13,38 +13,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $inputData = $putData;
     }
 
-    // Check if required fields are present
-    if (isset($inputData['id']) && isset($inputData['status'])) {
-        // Assign PUT data to variables
-        $id = $inputData['id'];
-        $status = $inputData['status'];
+    // Check if api_key is provided in the URL
+    if (isset($_GET['api_key'])) {
+        $apiKey = $_GET['api_key'];
 
         // Create database connection
         $db = new Database();
         $db_connect = $db->getConnection();
 
-        // Prepare SQL query to update data
-        $query = "UPDATE donasi SET status = ? WHERE id = ?";
+        // Query to check if the api_key is valid
+        $query = "SELECT * FROM admin WHERE api_key = ?";
         $stmt = $db_connect->prepare($query);
+        $stmt->bind_param("s", $apiKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Bind parameters to the SQL query
-        $stmt->bind_param("si", $status, $id);
+        // If api_key is valid, proceed with the update operation
+        if ($result->num_rows > 0) {
+            // Check if required fields are present
+            if (isset($inputData['id']) && isset($inputData['status'])) {
+                // Assign PUT data to variables
+                $id = $inputData['id'];
+                $status = $inputData['status'];
 
-        // Execute the query
-        if ($stmt->execute()) {
-            // Send a success response
-            echo json_encode(array('message' => 'Data successfully updated'));
+                // Prepare SQL query to update data
+                $query = "UPDATE donasi SET status = ? WHERE id = ?";
+                $stmt = $db_connect->prepare($query);
+
+                // Bind parameters to the SQL query
+                $stmt->bind_param("si", $status, $id);
+
+                // Execute the query
+                if ($stmt->execute()) {
+                    // Send a success response
+                    echo json_encode(array('message' => 'Data successfully updated'));
+                } else {
+                    // Send an error response if the query fails
+                    echo json_encode(array('message' => 'Data update failed', 'error' => $stmt->error));
+                }
+
+                // Close the statement and connection
+                $stmt->close();
+                $db_connect->close();
+            } else {
+                // Send an error response if required fields are missing
+                echo json_encode(array('message' => 'Missing required fields'));
+            }
         } else {
-            // Send an error response if the query fails
-            echo json_encode(array('message' => 'Data update failed', 'error' => $stmt->error));
+            // If api_key is invalid, send an error response
+            echo json_encode(array('message' => 'Invalid API key'));
         }
-
-        // Close the statement and connection
-        $stmt->close();
-        $db_connect->close();
     } else {
-        // Send an error response if required fields are missing
-        echo json_encode(array('message' => 'Missing required fields'));
+        // If api_key is not provided, send an error response
+        echo json_encode(array('message' => 'Missing API key'));
     }
 } else {
     // Send an error response if the request method is not PUT
