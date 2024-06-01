@@ -11,6 +11,9 @@ if (empty($_SESSION['id'])) {
     <title>ADMIN</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.20/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <style>
     * {
@@ -64,8 +67,8 @@ if (empty($_SESSION['id'])) {
         transition: 0.5s;
     }
 
-    .card{
-        border: solid powderblue 2px; 
+    .card {
+        border: solid powderblue 2px;
     }
 </style>
 
@@ -116,7 +119,7 @@ if (empty($_SESSION['id'])) {
                 <div class="row">
                     <div class="col card" style="margin: 0% 2%; align-items: center; text-align: center;">
                         <img src="foto/donasi.png" alt="foto" width="50%" style="margin-top: -20%;">
-                        
+
                         <h6>
                             DONASI TERKUMPUL
                             <hr>
@@ -292,42 +295,42 @@ if (empty($_SESSION['id'])) {
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <?php
-                                                        // Inisialisasi CURL
-                                                        $curl = curl_init();
+                                                    // Inisialisasi CURL
+                                                    $curl = curl_init();
 
-                                                        // Set URL dari API
-                                                        curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getsedekah.php");
+                                                    // Set URL dari API
+                                                    curl_setopt($curl, CURLOPT_URL, "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getsedekah.php");
 
-                                                        // Set metode HTTP menjadi GET
-                                                        curl_setopt($curl, CURLOPT_HTTPGET, true);
+                                                    // Set metode HTTP menjadi GET
+                                                    curl_setopt($curl, CURLOPT_HTTPGET, true);
 
-                                                        // Set agar CURL mengembalikan respons sebagai string
-                                                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                                                    // Set agar CURL mengembalikan respons sebagai string
+                                                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-                                                        // Lakukan request ke API
-                                                        $response = curl_exec($curl);
+                                                    // Lakukan request ke API
+                                                    $response = curl_exec($curl);
 
-                                                        // Tutup CURL
-                                                        curl_close($curl);
+                                                    // Tutup CURL
+                                                    curl_close($curl);
 
-                                                        // Dekode respons JSON
-                                                        $result = json_decode($response, true);
+                                                    // Dekode respons JSON
+                                                    $result = json_decode($response, true);
 
-                                                        // Periksa apakah respons berisi hasil yang valid
-                                                        if (isset($result['result'])) {
-                                                            // Looping melalui hasil untuk menampilkan tombol dropdown
-                                                            foreach ($result['result'] as $data) {
-                                                                ?>
-                                                                <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
-                                                                    <?= $data['jenis']; ?><br>
-                                                                    <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
-                                                                </button>
-                                                                <?php
-                                                            }
-                                                        } else {
-                                                            echo "No data available";
+                                                    // Periksa apakah respons berisi hasil yang valid
+                                                    if (isset($result['result'])) {
+                                                        // Looping melalui hasil untuk menampilkan tombol dropdown
+                                                        foreach ($result['result'] as $data) {
+                                                    ?>
+                                                            <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
+                                                                <?= $data['jenis']; ?><br>
+                                                                <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
+                                                            </button>
+                                                    <?php
                                                         }
-                                                        ?>
+                                                    } else {
+                                                        echo "No data available";
+                                                    }
+                                                    ?>
 
                                                 </ul>
                                             </div>
@@ -427,12 +430,12 @@ if (empty($_SESSION['id'])) {
                                                     if (isset($result['result'])) {
                                                         // Looping melalui hasil untuk menampilkan tombol dropdown
                                                         foreach ($result['result'] as $data) {
-                                                            ?>
+                                                    ?>
                                                             <button type="submit" class="dropdown-item btn btn-outline-danger btn-group" name="id" value="<?= $data['id']; ?>">
                                                                 <?= $data['jenis']; ?><br>
                                                                 <img src="foto/delete.png" alt="..." width="20%" style="margin-left: 20%;">
                                                             </button>
-                                                            <?php
+                                                    <?php
                                                         }
                                                     } else {
                                                         echo "No data available";
@@ -450,22 +453,16 @@ if (empty($_SESSION['id'])) {
                 </div>
             </div>
         </div>
+
         <div class="list container text-center" style="background-color: rgba(34, 191, 187, 0.1);">
             <div class="btn-group dropup">
                 <button type="button" class="btn btn-success">LIHAT DAFTAR DONASI</button>
-                <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="visually-hidden"></span>
+                <button onclick="downloadPDF()" class="btn btn-primary">
+                    <i class="fa fa-download"></i> Download PDF
                 </button>
-                <form action="admin.php">
-                    <ul class="dropdown-menu">
-                        <button type="submit" class="dropdown-item" name="program" value="sedekah">SEDEKAH</button>
-                        <button type="submit" class="dropdown-item" name="program" value="wakaf">WAKAF</button>
-                        <button type="submit" class="dropdown-item" name="program" value="all">ALL</button>
-                    </ul>
-                </form>
             </div><br>
             <h4 style="text-align: left;">DAFTAR DONASI :</h4>
-            <table class="table table-default table-hover table-bordered" style="border: solid #22bfbb 3px;">
+            <table id="tabeldonasi" class="table table-default table-hover table-bordered" style="border: solid #22bfbb 3px;">
                 <tr style="text-align: center; color: black;">
                     <th>Id</th>
                     <th>Nama Donatur</th>
@@ -480,17 +477,12 @@ if (empty($_SESSION['id'])) {
                 </tr>
                 <?php
                 $url = "https://sao-restapi-q2od2bwu5a-et.a.run.app/api-sao/getdonasi.php?api_key=" . $_SESSION['api_key'];
-                
+
                 $data = [];
-                
-                // Check if 'program' parameter is set in the URL
-                if (isset($_GET['program'])) {
-                    $data['program'] = $_GET['program'];
-                }
-                
+
                 // Initialize cURL session
                 $curl = curl_init();
-                
+
                 // Set the cURL options
                 curl_setopt_array($curl, [
                     CURLOPT_URL => $url . '&' . http_build_query($data), // Append query parameters to the URL
@@ -499,10 +491,10 @@ if (empty($_SESSION['id'])) {
                     CURLOPT_FOLLOWLOCATION => true, // Follow redirects
                     CURLOPT_MAXREDIRS => 10, // Limit the number of redirects
                 ]);
-                
+
                 // Execute the cURL request and store the response
                 $response = curl_exec($curl);
-                
+
                 // Check for errors
                 if ($response === false) {
                     // Handle cURL error
@@ -511,12 +503,12 @@ if (empty($_SESSION['id'])) {
                     // Decode the JSON response
                     $data = json_decode($response, true);
                     // echo $response;
-                
+
                     // Check if the response contains 'result' key
                     if (isset($data['result'])) {
                         // Iterate through each data in the 'result' array
                         foreach ($data['result'] as $row) {
-                            ?>
+                ?>
                             <tr>
                                 <td><?= $row['id']; ?></td>
                                 <td><?= $row['nama']; ?></td>
@@ -544,16 +536,16 @@ if (empty($_SESSION['id'])) {
                                     </form>
                                 </td>
                             </tr>
-                        <?php
+                <?php
                         }
                     } else {
                         // If 'result' key is not found in the response
                         echo "<tr><td colspan='11'>No records found.</td></tr>";
                     }
                 }
-                
+
                 // Close the cURL session
-                curl_close($curl); 
+                curl_close($curl);
                 ?>
             </table>
         </div>
@@ -577,6 +569,121 @@ if (empty($_SESSION['id'])) {
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+    <!-- Untuk Download pdf -->
+    <script>
+        window.jsPDF = window.jspdf.jsPDF;
+
+        async function downloadPDF() {
+            const doc = new jsPDF();
+
+            // Add your PDF generation logic here
+            // Add a title with a larger font and bold style
+            doc.setFontSize(20);
+            doc.setFont("helvetica", "bold");
+            doc.text("DAFTAR DONASI", 105, 15, null, null, "center");
+
+            // Add a subtitle or date below the title
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+
+            // Get current date and time in WIB time zone
+            const options = {
+                timeZone: 'Asia/Jakarta'
+            }; // Set time zone to WIB (Asia/Jakarta)
+            const currentDateTime = new Date().toLocaleString('en-US', options);
+
+            doc.text(`Laporan Donasi - ${currentDateTime}`, 105, 22, null, null, "center"); // Add date and time to the PDF document
+
+            // Draw a line below the title and subtitle
+            doc.setLineWidth(0.5);
+            doc.line(14, 25, 196, 25);
+
+            // Define the table element
+            const table = document.getElementById("tabeldonasi");
+
+            // Use autoTable plugin to draw the table with additional styling
+            doc.autoTable({
+                html: table,
+                startY: 30,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [34, 191, 187],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                bodyStyles: {
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 240]
+                },
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 1
+                }
+            });
+
+            // Add a footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 285, null, null, "center");
+            }
+
+            const filename = `Laporan Donasi - ${currentDateTime}.pdf`; // Nama file dengan tanggal dan waktu
+            // Save the PDF with filename containing date and time
+            doc.save(filename);
+
+            // Convert the PDF to a Blob
+            const pdfBlob = doc.output('blob');
+
+            // Create a FormData object and append the Blob
+            const formData = new FormData();
+            formData.append('file', pdfBlob, 'Laporan Donasi.pdf'); // File pdf
+
+            // Dapatkan objek tanggal dan waktu saat ini
+            const currentDate = new Date();
+            // Dapatkan tanggal
+            const date = currentDate.getDate();
+            // Dapatkan bulan
+            const month = currentDate.getMonth() + 1; // Perlu ditambah 1 karena bulan dimulai dari 0 (Januari adalah 0)
+            // Dapatkan tahun
+            const year = currentDate.getFullYear();
+            // Dapatkan jam
+            const hours = currentDate.getHours();
+            // Dapatkan menit
+            const minutes = currentDate.getMinutes();
+            // Dapatkan detik
+            const seconds = currentDate.getSeconds();
+
+            formData.append('fileOutputName', `Laporan Donasi ${month}-${date}-${year} ${hours}:${minutes}:${seconds}.pdf`); // Nama file output
+
+            try {
+                // Send the POST request to the server using Axios
+                const response = await axios.post('https://sao-storage-q2od2bwu5a-et.a.run.app/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                // Log the response from the server
+                console.log('File uploaded successfully to cloud storage:', response.data);
+                alert('File uploaded successfully!');
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                alert('Failed to upload file.');
+            }
+        }
+    </script>
+
+
+
+
 </body>
 
 </html>
